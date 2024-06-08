@@ -1,5 +1,6 @@
-pandas
+pathlib
 streamlit
+pandas
 scikit-learn
 geopandas
 seaborn
