@@ -23,8 +23,8 @@ def run():
                        layout="wide", # PREFERONS-NOUS UNE DISPOSITION LARGE OU PLUS ETROITE ET CENTREE ???
                        initial_sidebar_state="expanded",
                        )
-    st.write(Path.cwd().glob('*'))
-    st.sidebar.image("/wildfires_dst/streamlit/assets/wildfire.png",
+    #st.write(Path.cwd().glob('*'))
+    st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",
                      use_column_width=True,
                      )
     
