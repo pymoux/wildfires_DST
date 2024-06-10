@@ -12,28 +12,30 @@ def run():
     st.header("Exploitation des données des feux de forêts aux Etats-Unis entre 1992 et 2015")
 
     # Context
-    st.subheader("Contexte DataScientest")
+    st.subheader("Contexte")
     st.markdown(
         """
-        *Illud tamen te esse admonitum volo*, primum ut qualis es talem te esse omnes existiment ut, quantum a rerum turpitudine abes,
-        tantum te a verborum libertate seiungas; deinde ut ea in alterum ne dicas, quae cum tibi falso responsa sint, erubescas.
+        Les feux de forêt sont souvent un élément naturel et indispensable à l'équilibre des écosystèmes, mais leur combinaison avec le changement climatique, la sécheresse, les modifications des régimes d'incendie et l'urbanisation peut les rendre destructeurs et coûteux. Ces dernières décennies, les incendies aux États-Unis ont pris de l'ampleur, tant en taille, en coût qu’en complexité, survenant désormais tout au long de l'année. Le changement climatique aggrave cette tendance, provoquant des feux plus fréquents et intenses, qui à leur tour émettent des émissions de carbone, alimentant ainsi davantage le changement climatique.
         
-        **Quis est enim, cui via ista non pateat**, qui isti aetati atque etiam isti dignitati non possit quam velit petulanter, etiamsi
-        sine ulla suspicione, at non sine argumento male dicere? Sed istarum partium culpa est eorum, qui te agere voluerunt; laus pudoris
-        tui, quod ea te invitum dicere videbamus, ingenii, quod ornate politeque dixisti.
+        Les effets dévastateurs des graves incendies de forêt sont devenus bien réels pour les communautés et les pompiers forestiers de tout le pays. En 2023, le National Interagency Fire Center a enregistré 68 988 incendies aux États-Unis, dévastant 7,5 millions d'acres, des chiffres dépassant la moyenne décennale.
+        
+        Conscient de l'urgence de la situation, le budget du président Biden pour 2024 propose une augmentation financière substantielle dépassant les 4.3 milliards de dollars répartis entre le Département de l’Intérieur (DOI) pour un montant de 1.33 milliards (soit 233 millions de dollars ou 21% supplémentaires par rapport à 2023) et le Département de l’Agriculture (USDA) qui s’élève à 2.97 milliards de dollars (soit 647 millions de dollars ou 28% supplémentaire par rapport à 2023).
+        
+        Bien que ces augmentations soient principalement dédiés à réformer la rémunération de la main d’oeuvre, les demandes budgétaires prévoit également des augmentations significatives pour les moyens de préparation aux incendies incluant entre autres le traitement proactifs des surfaces à risque, le financement de systèmes aériens ou encore le développement d’intelligence artificielle et l’automatisation pour identifier les domaines clés permettant de réduire les besoins en personnel et risques pour les pompiers forestiers.
+
         """
         )
     
     # Objectives
-    st.subheader("Objectifs DataScientest")
+    st.subheader("Objectifs")
     st.markdown(
         """
-        ***Illud tamen te esse admonitum volo***, primum ut qualis es talem te esse omnes existiment ut, quantum a rerum turpitudine abes,
-        tantum te a verborum libertate seiungas; deinde ut ea in alterum ne dicas, quae cum tibi falso responsa sint, erubescas.
+        Dans le cadre de notre formation de Data Analyst, ce projet d'analyse vise à examiner en profondeur les données de plusieurs millions d'incendies de forêt enregistrés aux États-Unis sur la période 1992-2015. En utilisant les outils et méthodes enseignés, notre objectif en tant que non-experts dans le domaine des incendies sera d'identifier les facteurs clés responsables des incendies majeurs et de prédire leurs répercussions.
         
-        ****Quis est enim, cui via ista non pateat****, qui isti aetati atque etiam isti dignitati non possit quam velit petulanter, etiamsi
-        sine ulla suspicione, at non sine argumento male dicere? Sed istarum partium culpa est eorum, qui te agere voluerunt; laus pudoris
-        tui, quod ea te invitum dicere videbamus, ingenii, quod ornate politeque dixisti.
+        À cet effet, nous étudierons attentivement les données des feux de forêt et nous les croiserons avec d'autres variables telles que les données météo, la densité de population, et les localisations des stations de pompiers. Cette approche nous permettra de déterminer les tendances et les modèles qui pourraient prévoir l'émergence et la propagation des incendies de forêt. 
+        
+        En analysant ces données à travers des techniques avancées d'apprentissage automatique et de modélisation statistique, nous chercherons à développer des outils prédictifs précis pour aider les autorités locales et les organismes de lutte contre les incendies à anticiper et à répondre efficacement aux futurs événements.
+
         """
         )
     

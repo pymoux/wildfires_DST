@@ -1,5 +1,4 @@
 # main.py
-from pathlib import Path
 import streamlit as st
 from tabs import introduction, wildfires_data, weather_data, us_forests, modeling, conclusion
 from data_loading import load_df
@@ -23,10 +22,9 @@ def run():
                        layout="wide", # PREFERONS-NOUS UNE DISPOSITION LARGE OU PLUS ETROITE ET CENTREE ???
                        initial_sidebar_state="expanded",
                        )
-    #st.write(Path.cwd().glob('*'))
-    st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",
-                     use_column_width=True,
-                     )
+    
+    #st.sidebar.image("assets/wildfire.png",use_column_width=True,)
+    st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",use_column_width=True,)
     
     tab_selection = st.sidebar.radio("", list(TABS.keys()), 0)
 
@@ -35,8 +33,11 @@ def run():
 
     st.sidebar.markdown("---")
     st.sidebar.markdown(f"### Promotion Continue Data Analyst - Novembre 2023")
-    st.sidebar.markdown("---")
-    st.sidebar.markdown(f"### Promotion Continue Data Analyst - Novembre 2023")
+    st.sidebar.markdown(
+        "#### Joan VIVION\n"
+        "#### Michaël DREXLER\n"
+        "#### Xavier LOUIS"
+    )
 
 if __name__ == "__main__":
     run()
