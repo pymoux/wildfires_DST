@@ -23,8 +23,8 @@ def run():
                        initial_sidebar_state="expanded",
                        )
     
-    #st.sidebar.image("assets/wildfire.png",use_column_width=True,)
-    st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",use_column_width=True,)
+    st.sidebar.image("assets/wildfire.png",use_column_width=True,)
+    #st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",use_column_width=True,)
     
     tab_selection = st.sidebar.radio("", list(TABS.keys()), 0)
 

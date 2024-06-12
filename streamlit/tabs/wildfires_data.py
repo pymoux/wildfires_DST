@@ -4,16 +4,30 @@ import numpy as np
 import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
+import gdown
+import os
 
 title = "Les feux de forêt aux États-Unis entre 1992 et 2015"
 sidebar_name = "Données de feux de forêt"
 
+# Chemin vers le dossier où vous souhaitez télécharger et enregistrer les données
+data_dir = r'data'
+os.makedirs(data_dir, exist_ok=True)
+
 # Charger les données une seule fois au chargement de l'application
 @st.cache_data()
 def load_data():
-    #data_path = r'C:\Users\jvivion\Documents\wildfires_DST-main\wildfires_DST-main\streamlit\data\wildfires15_db.csv'
-    data_path = r'/mount/src/wildfires_dst/streamlit/data/wildfires15_db.csv'
-    df = pd.read_csv(data_path)
+    # URL du fichier Google Drive
+    file_id = '1LnR8--iqjqsk-B15Rcgf-Le4zuo3HqCn'
+    destination = os.path.join(data_dir, 'wildfires15_db.csv')
+    
+    # Télécharger le fichier depuis Google Drive s'il n'existe pas déjà
+    if not os.path.exists(destination):
+        gdown.download(f"https://drive.google.com/uc?id={file_id}", destination, quiet=False)
+    
+    # Charger les données
+    df = pd.read_csv(destination)
+    
     return df
 
 def run():
