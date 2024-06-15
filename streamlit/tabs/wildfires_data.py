@@ -6,6 +6,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import gdown
 import os
+import statsmodels.api
+import statsmodels.formula.api as smf
 
 title = "Les feux de forêt aux États-Unis entre 1992 et 2015"
 sidebar_name = "Données de feux de forêt"
@@ -56,6 +58,19 @@ def run():
         - **relatives à la cause identifiée de l’incendie**, code et description.
         """
     )
+    
+    # Charger les données
+    df = load_data()
+    
+    # Ajouter un volet pour afficher/masquer les données et les statistiques
+    with st.expander("**Afficher/Masquer les données et les statistiques**"):
+        # Afficher les premières lignes du dataset
+        st.subheader("Aperçu des données")
+        st.write(df.head())
+        
+        # Statistiques descriptives
+        st.subheader("Statistiques descriptives")
+        st.write(df.describe())
     
     # Tabs for different dimensions
     dimension_tabs = st.tabs(["Dimension temporelle", "Dimension spatiale", "Dimension cause des incendies"])
@@ -157,6 +172,28 @@ def run():
             Cette première analyse met donc dors et déjà en évidence des liens de corrélations entre le nombre de feux et la dimension temporelle.</b>
             </div>
             """, unsafe_allow_html=True
+        )
+        # Transition vers l'analyse ANOVA
+        st.markdown("---")
+        st.markdown("Analysons maintenant les résultats du test ANOVA entre le mois et le nombre d'incendies.")
+
+        # Test ANOVA ('MONTH' <-> Number of fires)
+        result = smf.ols(formula='FOD_ID ~ MONTH', data=df).fit()
+        table = statsmodels.api.stats.anova_lm(result)
+        st.write(table)
+
+        # Analyse des résultats du test ANOVA
+        st.markdown(
+        """
+        ### Résultats du test ANOVA
+
+        Les résultats de l'ANOVA montrent une valeur F de 871.508747 et une valeur p associée de 1.696398e-191. Ces résultats suggèrent une différence statistiquement significative entre les mois en termes de nombre d'incendies.
+
+        - **F-statistique (F)** : La valeur F est très élevée, ce qui indique que les variations entre les mois expliquent une part importante de la variation totale des incendies.
+        - **P-valeur (PR(>F))** : La valeur p est extrêmement faible (bien inférieure à 0.05), ce qui signifie que la probabilité que ces résultats soient dus au hasard est quasi nulle. Cela confirme que le mois a un impact significatif sur le nombre d'incendies.
+
+        En résumé, le test ANOVA confirme que le mois de l'année influence de manière significative le nombre d'incendies, soutenant les observations visuelles faites à partir des graphiques.
+        """
         )
 
     with dimension_tabs[1]:
@@ -272,6 +309,28 @@ def run():
         En analysant le nombre de feux par état, on remarque que certains états sont beaucoup plus touchés que d’autres, ce qui peut s’expliquer par des facteurs géographiques, climatiques et démographiques variés.
         """
         )
+        # Analyse avec test ANOVA pour 'GACC_area'
+        st.markdown("---")
+        st.markdown("Analysons maintenant les résultats du test ANOVA entre les régions GACC et le nombre d'incendies.")
+
+        # Test ANOVA ('GACC_area' <-> Number of fires)
+        result_gacc = smf.ols(formula='FOD_ID ~ GACC_area', data=df).fit()
+        table_gacc = statsmodels.api.stats.anova_lm(result_gacc)
+        st.write(table_gacc)
+
+        # Analyse des résultats du test ANOVA pour 'GACC_area'
+        st.markdown(
+        """
+        ### Résultats du test ANOVA pour les régions GACC
+
+        Les résultats de l'ANOVA montrent une valeur F de {} et une valeur p associée de {}. Ces résultats suggèrent une différence statistiquement significative entre les régions GACC en termes de nombre d'incendies.
+
+        - **F-statistique (F)** : La valeur F indique dans quelle mesure les moyennes des groupes sont différentes. Plus la valeur de F est grande, plus il est improbable que les moyennes des groupes soient égales.
+        - **P-valeur (PR(>F))** : La valeur p est très faible (bien inférieure à 0.05), ce qui signifie que la probabilité que ces résultats soient dus au hasard est quasi nulle. Cela confirme que la région GACC a un impact significatif sur le nombre d'incendies.
+
+        En résumé, le test ANOVA confirme que la région GACC influence de manière significative le nombre d'incendies, soutenant les observations visuelles faites à partir des graphiques.
+        """.format(table_gacc.loc['GACC_area', 'F'], table_gacc.loc['GACC_area', 'PR(>F)'])
+        )
 
     with dimension_tabs[2]:
         st.header("Dimension cause des incendies")
@@ -361,6 +420,29 @@ def run():
 
             PS : Selon une étude, les feux d’origine humaine se situent généralement dans un rayon de 50 m d’une zone d’habitation (résidentielle ou industrielle). En cas de départ, le feu est rapidement constaté et les moyens de défense rapidement mis en œuvre eu égard à l’accessibilité. En cas de cause naturelle : foudre (ou lignes électriques qui touchent la végétation par vent fort par exemple), il y a rarement une présence humaine à proximité directe et la topographie peut accentuer les difficultés d’accès.
             """
+        )
+        
+         # Analyse avec test ANOVA pour 'STAT_CAUSE_DESCR'
+        st.markdown("---")
+        st.markdown("Analysons maintenant les résultats du test ANOVA entre la cause des incendies et leur taille moyenne.")
+
+        # Test ANOVA ('STAT_CAUSE_DESCR' <-> Fire size)
+        result_cause_size = smf.ols(formula='FIRE_SIZE ~ STAT_CAUSE_DESCR', data=df).fit()
+        table_cause_size = statsmodels.api.stats.anova_lm(result_cause_size)
+        st.write(table_cause_size)
+
+        # Analyse des résultats du test ANOVA pour 'STAT_CAUSE_DESCR'
+        st.markdown(
+        """
+        ### Résultats du test ANOVA pour la cause des incendies et leur taille moyenne
+
+        Les résultats de l'ANOVA montrent une valeur F de {} et une valeur p associée de {}. Ces résultats suggèrent une différence statistiquement significative entre les causes des incendies en termes de taille moyenne.
+
+        - **F-statistique (F)** : La valeur F est élevée, ce qui indique que les variations entre les causes d'incendies expliquent une part importante de la variation totale de la taille des incendies.
+        - **P-valeur (PR(>F))** : La valeur p est très faible (bien inférieure à 0.05), ce qui signifie que la probabilité que ces résultats soient dus au hasard est quasi nulle. Cela confirme que la cause des incendies a un impact significatif sur la taille moyenne des incendies.
+
+        En résumé, le test ANOVA confirme que la cause des incendies influence de manière significative la taille moyenne des incendies, soutenant les observations visuelles faites à partir des graphiques.
+        """.format(table_cause_size.loc['STAT_CAUSE_DESCR', 'F'], table_cause_size.loc['STAT_CAUSE_DESCR', 'PR(>F)'])
         )
 
 if __name__ == "__main__":
