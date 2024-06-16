@@ -33,30 +33,61 @@ def load_data():
     return df
 
 def run():
+    # Inclure le lien CDN pour Font Awesome
+    st.markdown(
+        """
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+        .icon {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.title(title)
     st.markdown("---")
     
     # Contexte
-    st.header("Contexte des données")
     st.markdown(
         """
-        Pour notre étude, nous avons à disposition un jeu de données principal mis à disposition pour notre projet, celui-ci est disponible sur le site [Kaggle](https://www.kaggle.com):
-        **1.88 Million US Wildfires, 24 years of geo-referenced wildfire records**.
+        <h2><i class="fas fa-info-circle icon"></i> Contexte des données</h2>
+        <p>
+        Pour notre étude, nous avons à disposition un jeu de données principal mis à disposition pour notre projet, celui-ci est disponible sur le site <a href="https://www.kaggle.com">Kaggle</a>:
+        <strong>1.88 Million US Wildfires, 24 years of geo-referenced wildfire records</strong>.
         Ce jeu de données contient une base de données spatiales des incendies de forêt recensés aux États-Unis à partir de rapport d'organismes de lutte contre les incendies fédérales, étatiques et locales sur une période s'étalant de 1992 à 2015. Ces données ont été collectées grâce au financement du gouvernement américain et sont libres de tout droit pour utilisation.
-        """
+        </p>
+        """,
+        unsafe_allow_html=True
     )
     
-    # Source
-    st.header("Source des données")
+     # Source
     st.markdown(
-        """
-        Ce dataset contient globalement des données :
-        - **d’identification** selon différents référentiels ;
-        - **temporelles** concernant à la fois la découverte de l’incendie et sa maîtrise ;
-        - **géographiques** avec les latitudes et longitudes ainsi que l’état et le comté de découverte ;
-        - **relatives à la taille de l’incendie** avec la surface en acres et la classe correspondante ;
-        - **relatives à la cause identifiée de l’incendie**, code et description.
-        """
+    """
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+    .icon {
+        font-size: 24px;
+        margin-right: 10px;
+    }
+    .icon-common { color: #FFA500; } /* Couleur orange */
+    </style>
+    <h2><i class="fas fa-database icon icon-common"></i> Source des données</h2>
+    <p>
+    Ce dataset contient globalement des données :
+    <ul>
+        <li><i class="fas fa-id-card icon icon-common"></i> <strong>d’identification</strong> selon différents référentiels ;</li>
+        <li><i class="fas fa-clock icon icon-common"></i> <strong>temporelles</strong> concernant à la fois la découverte de l’incendie et sa maîtrise ;</li>
+        <li><i class="fas fa-map-marker-alt icon icon-common"></i> <strong>géographiques</strong> avec les latitudes et longitudes ainsi que l’état et le comté de découverte ;</li>
+        <li><i class="fas fa-ruler-combined icon icon-common"></i> <strong>relatives à la taille de l’incendie</strong> avec la surface en acres et la classe correspondante ;</li>
+        <li><i class="fas fa-fire icon icon-common"></i> <strong>relatives à la cause identifiée de l’incendie</strong>, code et description.</li>
+    </ul>
+    </p>
+    """,
+    unsafe_allow_html=True
     )
     
     # Charger les données
