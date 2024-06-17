@@ -1,7 +1,6 @@
 #main.py
 import streamlit as st
 from tabs import introduction, wildfires_data, weather_data, us_forests, modeling, conclusion
-from data_loading import load_df
 from data_processing import process_data
 from data_visualization import visualize_data
 import base64
