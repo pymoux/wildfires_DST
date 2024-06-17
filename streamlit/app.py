@@ -1,10 +1,10 @@
-# main.py
+#main.py
 import streamlit as st
 from tabs import introduction, wildfires_data, weather_data, us_forests, modeling, conclusion
 from data_loading import load_df
 from data_processing import process_data
 from data_visualization import visualize_data
-
+import base64
 
 TABS = {
     introduction.sidebar_name: introduction,
@@ -15,6 +15,9 @@ TABS = {
     conclusion.sidebar_name: conclusion
 }
 
+def get_base64_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
 
 def run():
     
@@ -23,8 +26,8 @@ def run():
                        initial_sidebar_state="expanded",
                        )
     
-    st.sidebar.image("assets/wildfire.png",use_column_width=True,)
-    #st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",use_column_width=True,)
+    st.sidebar.image("assets/wildfire.png", use_column_width=True)
+    # st.sidebar.image("/mount/src/wildfires_dst/streamlit/assets/wildfire.png",use_column_width=True,)
     
     tab_selection = st.sidebar.radio("", list(TABS.keys()), 0)
 
@@ -32,11 +35,17 @@ def run():
     tab.run()
 
     st.sidebar.markdown("---")
-    st.sidebar.markdown(f"### Promotion Continue Data Analyst - Novembre 2023")
+    st.sidebar.markdown("### Promotion Continue Data Analyst - Novembre 2023")
+    
+    linkedin_icon_base64 = get_base64_image("assets/linkedin.png")
+    
     st.sidebar.markdown(
-        "#### Joan VIVION\n"
-        "#### Michaël DREXLER\n"
-        "#### Xavier LOUIS"
+        f"""
+        #### Joan VIVION <a href="https://www.linkedin.com/in/joan-vivion/" target="_blank"><img src="data:image/png;base64,{linkedin_icon_base64}" width="30" style="margin-left: 10px;"></a>
+        #### Michaël DREXLER
+        #### Xavier LOUIS
+        """,
+        unsafe_allow_html=True
     )
 
 if __name__ == "__main__":
