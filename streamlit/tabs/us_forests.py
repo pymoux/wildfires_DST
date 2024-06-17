@@ -34,7 +34,22 @@ def run():
 
     def nat_forests():
         st.header('Les différentes forêts nationales')
-        # Vous pouvez ajouter le contenu de cette fonction ici
+
+        # Liste des forêts nationales et leurs descriptions
+        forests = {
+        "Forêt nationale de Coconino": "L'une des forêts nationales les plus diversifiées du pays, avec des paysages et des activités changeants à chaque coin de rue. Explorez les montagnes et les canyons, pêchez dans les petits lacs et pataugez dans les ruisseaux et les ruisseaux tranquilles.",
+        "Forêt nationale de Deschutes": "La forêt nationale de Deschutes s'étend sur près de 1,6 million d'acres et offre des possibilités de loisirs toute l'année.",
+        "Forêt nationale d'Ouachita": "Située en Arkansas et en Oklahoma, la forêt nationale d'Ouachita abrite des collines, des lacs immaculés, des merveilles géologiques et une vaste gamme d'aventures à chaque tournant !",
+        "Forêt nationale de Chattahoochee-Oconee": "La forêt nationale de Chattahoochee-Oconee offre les meilleures possibilités de loisirs de plein air et les meilleures ressources naturelles de Géorgie. Comprenant près de 867 000 acres répartis dans 26 comtés, des milliers de kilomètres de ruisseaux et de rivières aux eaux claires, environ 850 milles de sentiers récréatifs et des dizaines de terrains de camping, d'aires de pique-nique et d'autres possibilités d'activités récréatives, ces terres sont riches en paysages naturels, en histoire et en culture.",
+        "Forêt nationale de Lolo": "La forêt nationale de Lolo est une destination idéale pour les habitants et les visiteurs qui souhaitent jouer. Il y a tellement de choses à explorer avec des opportunités telles que la randonnée, l'équitation en VHR, le camping, la location de chalets et de tours d'observation, les sports d'hiver et deux centres d'accueil.",
+        "Forêt nationale de San Bernardino": "À seulement quelques kilomètres de l'Inland Empire, du Haut Désert et de la vallée de Coachella, nous sommes situés à la fois à San Bernardino et dans le comté de Riverside. Faites de la randonnée, du vélo, du camping, de la raquette, conduisez votre VHR ou découvrez les ruisseaux, les ruisseaux et les cascades."
+        }
+
+        # Sélection de la forêt dans la liste déroulante
+        selected_forest = st.selectbox("Sélectionnez une forêt nationale", list(forests.keys()))
+
+        # Affichage de la description de la forêt sélectionnée
+        st.write(f"**{selected_forest}** : {forests[selected_forest]}")
 
     SUBTABS = {
         "US Forest Service": usfs,
