@@ -1,3 +1,5 @@
 streamlit/tabs/__pycache__/
 streamlit/data/__pycache__/
 streamlit/__pycache__/
+*.pyc
+/streamlit/__pycache__
