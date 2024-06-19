@@ -120,7 +120,10 @@ def run():
         df_plotly = pd.DataFrame(data)
 
         # Créer le premier graphique avec Plotly
-        fig = px.bar(df_plotly, x='Year', y='Fires', labels={'Fires': 'Nombre de feux'})
+        fig = px.bar(df_plotly,
+                     x='Year',
+                     y='Fires',
+                     labels={'Fires': 'Nombre de feux'})
 
         # Ajouter une ligne de régression linéaire
         m, b = np.polyfit(df_plotly['Year'], df_plotly['Fires'], 1)
@@ -131,7 +134,16 @@ def run():
         fig.update_traces(marker_color=custom_color)
 
         # Mettre en forme le titre en gras et le centrer
-        fig.update_layout(title={'text': '<b>Distribution des feux de forêt au fil des ans</b>', 'font': {'size': 20}, 'x':0.5, 'xanchor': 'center'})
+        fig.update_layout(title={'text':'<b>Distribution des feux de forêt au fil des ans</b>',
+                                 'font': {'size': 18},
+                                 'x':0.5,
+                                 'xanchor': 'center'},
+                          legend={'font':{'size':11},
+                                  'x':0.01,
+                                  'xanchor':'left',
+                                  'y':0.99,
+                                  'yanchor':'top'},
+                          height=400, width=600)
 
         # Afficher le premier graphique
         st.plotly_chart(fig)
@@ -145,7 +157,7 @@ def run():
 
         # Transition entre les graphiques
         st.markdown("---")
-        st.markdown("Passons maintenant à l'analyse du nombre d'incendies par mois au fil des ans.")
+        st.markdown("Passons maintenant à l'analyse du nombre d'incendies par mois au fil des années.")
 
         # Création du dataframe pour le boxplot
         df_boxplot = df.groupby(['FIRE_YEAR', 'MONTH']).size().unstack(fill_value=0)
@@ -155,7 +167,11 @@ def run():
         fig_boxplot.update_traces(boxmean='sd')
 
         # Centrer le titre en gras
-        fig_boxplot.update_layout(title='<b>Nombre d\'incendies par mois au fil des ans</b>', title_x=0.5)
+        fig_boxplot.update_layout(title={'text':'<b>Nombre d\'incendies par mois au fil des années</b>',
+                                         'font': {'size': 18},
+                                         'x':0.5,
+                                         'xanchor':'center'},
+                                  height=400, width=600)
 
         # Ajouter les étiquettes sur l'axe des x pour les mois
         fig_boxplot.update_xaxes(title='Mois', tickvals=list(range(1, 13)), ticktext=['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'])
@@ -174,7 +190,7 @@ def run():
 
         # Transition vers le troisième graphique
         st.markdown("---")
-        st.markdown("Analysons maintenant le nombre d'incendies par jour de la semaine au fil des ans.")
+        st.markdown("Analysons maintenant le nombre d'incendies par jour de la semaine au fil des années.")
 
         # Extraire le jour de la semaine (0 pour lundi, 1 pour mardi, ..., 6 pour dimanche)
         df['DAY_OF_WEEK'] = df['DISCO_DATE'].dt.dayofweek
@@ -187,7 +203,11 @@ def run():
         fig_boxplot2.update_traces(boxmean='sd')
 
         # Centrer le titre en gras
-        fig_boxplot2.update_layout(title='<b>Nombre d\'incendies par jour de la semaine au fil des ans</b>', title_x=0.5)
+        fig_boxplot2.update_layout(title={'text':'<b>Nombre d\'incendies par jour de la semaine au fil des années</b>',
+                                          'font':{'size':18},
+                                          'x':0.5,
+                                          'xanchor':'center'},
+                                   height=400, width=600)
 
         # Ajouter les étiquettes sur l'axe des x pour les jours de la semaine
         fig_boxplot2.update_xaxes(title='Jour', tickvals=list(range(7)), ticktext=['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'])
@@ -238,7 +258,7 @@ def run():
         )
 
         # Créer deux colonnes
-        col1, col2 = st.columns([2, 3])  # Vous pouvez ajuster les proportions
+        col1, col2 = st.columns([2, 2])  # Vous pouvez ajuster les proportions
 
         with col1:
             # Compter le nombre de feux par région GACC
@@ -258,13 +278,11 @@ def run():
             fig.update_yaxes(title='Nombre de feux')
 
             # Personnalisation du titre centré en gras
-            fig.update_layout(
-                title=dict(
-                    text='Nombre de feux par région GACC',
-                    x=0.5,  # Centrer le titre
-                    xanchor='center'  # Ancrer le titre au centre
-                ),
-            )
+            fig.update_layout(title={'text':'Nombre de feux par région GACC',
+                                     'font':{'size':18},
+                                     'x':0.5,  # Centrer le titre
+                                     'xanchor':'center'},  # Ancrer le titre au centre
+                              height=400, width=500)
 
             # Affichage du graphique
             st.plotly_chart(fig)
@@ -283,22 +301,21 @@ def run():
                                  opacity=0.6)
 
             # Mettre à jour les paramètres de la carte pour un fond transparent et des points orange
-            fig_map.update_geos(
-                showcountries=False, showcoastlines=False, showland=False, fitbounds="locations"
-            )
+            fig_map.update_geos(showcountries=False,
+                                showcoastlines=False,
+                                showland=False,
+                                fitbounds="locations")
 
             fig_map.update_traces(marker=dict(color='#FF8C00', size=5))
 
-            fig_map.update_layout(
-                title=dict(
-                    text='Répartition géographique des feux',
-                    x=0.5,  # Centrer le titre
-                    xanchor='center'  # Ancrer le titre au centre
-                ),
-                geo=dict(bgcolor='rgba(0,0,0,0)'),
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-            )
+            fig_map.update_layout(title={'text':'Répartition géographique des incendies',
+                                         'font':{'size':18},
+                                         'x':0.5,  # Centrer le titre
+                                         'xanchor':'center'},  # Ancrer le titre au centre
+                                  geo=dict(bgcolor='rgba(0,0,0,0)'),
+                                  paper_bgcolor='rgba(0,0,0,0)',
+                                  plot_bgcolor='rgba(0,0,0,0)',
+                                  height=400, width=500)
 
             # Affichage de la carte
             st.plotly_chart(fig_map)
@@ -329,7 +346,11 @@ def run():
         fig.update_yaxes(title='Nombre de feux')
 
         # Personnalisation du titre centré en gras
-        fig.update_layout(title='<b>Nombre de feux par état</b>', title_x=0.5)
+        fig.update_layout(title={'text':'<b>Nombre de feux par état</b>',
+                                 'font':{'size':18},
+                                 'x':0.5,
+                                 'xanchor':'center'},
+                         height=400, width=600)
 
         # Affichage du graphique
         st.plotly_chart(fig)
@@ -372,17 +393,22 @@ def run():
         )
 
         # Calcul du nombre d'incendies par cause
-        fires_by_cause = df['STAT_CAUSE_DESCR'].value_counts()
+        fires_by_cause = df['STAT_CAUSE_DESCR'].value_counts().sort_values()
 
         # Création du graphique avec Plotly en utilisant la palette Turbo
-        fig = px.bar(x=fires_by_cause.values, y=fires_by_cause.index, orientation='h',
+        fig = px.bar(x=fires_by_cause.values,
+                     y=fires_by_cause.index,
+                     orientation='h',
                      labels={'x':'Nombre d\'incendies', 'y':'Cause'},
-                     title='Répartition des incendies par cause',
                      color=fires_by_cause.values,
                      color_continuous_scale='turbo')
 
         # Mise à jour de la mise en page pour centrer et mettre en gras le titre
-        fig.update_layout(title={'text': '<b>Répartition des incendies par cause</b>', 'x':0.5, 'font_size': 20})
+        fig.update_layout(title={'text': '<b>Répartition des incendies par cause</b>',
+                                 'font':{'size':18},
+                                 'x':0.5,
+                                 'xanchor': 'center'},
+                         height=400, width=600)
 
         # Affichage du graphique
         st.plotly_chart(fig)
@@ -418,7 +444,11 @@ def run():
         fig.update_yaxes(range=[0, 100], title='Pourcentage des incendies')
 
         # Personnalisation du titre
-        fig.update_layout(title='Répartition des incendies par sources d\'allumage', title_x=0.5)
+        fig.update_layout(title={'text':'<b>Répartition des incendies par source d\'allumage</b>',
+                                 'font':{'size':18},
+                                 'x':0.5,
+                                 'xanchor':'center'},
+                         height=400, width=600)
 
         # Affichage du graphique
         st.plotly_chart(fig)
@@ -436,10 +466,19 @@ def run():
         size_cause = df.groupby('STAT_CAUSE_DESCR')['FIRE_SIZE'].mean().sort_values()
 
         # Création du graphique avec Plotly en utilisant la palette Turbo
-        fig = px.bar(x=size_cause.values, y=size_cause.index, orientation='h', labels={'x':'Taille moyenne des incendies (acres)', 'y':'Cause'}, title='Taille moyenne des incendies par cause', color=size_cause.values, color_continuous_scale='turbo')
+        fig = px.bar(x=size_cause.values,
+                     y=size_cause.index,
+                     orientation='h',
+                     labels={'x':'Taille moyenne des incendies (acres)', 'y':'Cause'},
+                     color=size_cause.values,
+                     color_continuous_scale='turbo')
 
         # Mise à jour de la mise en page pour centrer et mettre en gras le titre
-        fig.update_layout(title={'text': '<b>Taille moyenne des incendies par cause</b>', 'x':0.5, 'font_size': 20})
+        fig.update_layout(title={'text': '<b>Taille moyenne des incendies par cause</b>',
+                                 'font':{'size':18},
+                                 'x':0.5,
+                                 'xanchor':'center'},
+                         height=400, width=600)
 
         # Affichage du graphique
         st.plotly_chart(fig)

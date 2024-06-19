@@ -41,8 +41,8 @@ def run():
     st.sidebar.markdown(
         f"""
         #### Joan VIVION <a href="https://www.linkedin.com/in/joan-vivion/" target="_blank"><img src="data:image/png;base64,{linkedin_icon_base64}" width="30" style="margin-left: 10px;"></a>
-        #### Michaël DREXLER
-        #### Xavier LOUIS
+        #### Michaël DREXLER <a href="https://www.linkedin.com/in/drexlermichael/" target="_blank"><img src="data:image/png;base64,{linkedin_icon_base64}" width="30" style="margin-left: 10px;"></a>
+        #### Xavier LOUIS <a href="https://www.linkedin.com/in/xavier-louis/" target="_blank"><img src="data:image/png;base64,{linkedin_icon_base64}" width="30" style="margin-left: 10px;"></a>
         """,
         unsafe_allow_html=True
     )
