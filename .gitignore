@@ -3,3 +3,8 @@ streamlit/data/__pycache__/
 streamlit/__pycache__/
 *.pyc
 /streamlit/__pycache__
+.DS_Store
+*.pyc
+/streamlit/__pycache__
+streamlit/data/wildfires15_db.csv
+/streamlit/tabs/__pycache__
