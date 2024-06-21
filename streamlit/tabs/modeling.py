@@ -18,7 +18,7 @@ from datetime import datetime
 import numpy as np
 
 # Chemin vers le répertoire des données prétraitées
-preprocessed_data_dir = r"data\modeling_data"
+preprocessed_data_dir = r"data/modeling_data"
 
 # Fonction pour charger les données prétraitées
 @st.cache_data()
@@ -45,7 +45,7 @@ def run():
         "Prédiction": subpage2,
     }
     st.sidebar.title('Prédiction')
-    selection = st.sidebar.radio("Aller à", list(SUBPAGES.keys()))
+    selection = st.sidebar.radio("", list(SUBPAGES.keys()))
     subpage = SUBPAGES[selection]
     subpage()
 

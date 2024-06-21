@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import plotly.express as px
 import contextily as cx
 import gdown
 import os
@@ -53,7 +54,7 @@ def nat_forests():
     "Coconino National Forest": "L'une des forêts nationales les plus diversifiées du pays, avec des paysages et des activités changeants à chaque coin de rue. Explorez les montagnes et les canyons, pêchez dans les petits lacs et pataugez dans les ruisseaux et les ruisseaux tranquilles.",
     "Deschutes National Forest": "La forêt nationale de Deschutes s'étend sur près de 1,6 million d'acres et offre des possibilités de loisirs toute l'année.",
     "Ouachita National Forest": "Située en Arkansas et en Oklahoma, la forêt nationale d'Ouachita abrite des collines, des lacs immaculés, des merveilles géologiques et une vaste gamme d'aventures à chaque tournant !",
-    "Chattahoochee-Oconee National Forest": "La forêt nationale de Chattahoochee-Oconee offre les meilleures possibilités de loisirs de plein air et les meilleures ressources naturelles de Géorgie. Comprenant près de 867 000 acres répartis dans 26 comtés, des milliers de kilomètres de ruisseaux et de rivières aux eaux claires, environ 850 milles de sentiers récréatifs et des dizaines de terrains de camping, d'aires de pique-nique et d'autres possibilités d'activités récréatives, ces terres sont riches en paysages naturels, en histoire et en culture.",
+    "Chattahoochee National Forest": "La forêt nationale de Chattahoochee-Oconee offre les meilleures possibilités de loisirs de plein air et les meilleures ressources naturelles de Géorgie. Comprenant près de 867 000 acres répartis dans 26 comtés, des milliers de kilomètres de ruisseaux et de rivières aux eaux claires, environ 850 milles de sentiers récréatifs et des dizaines de terrains de camping, d'aires de pique-nique et d'autres possibilités d'activités récréatives, ces terres sont riches en paysages naturels, en histoire et en culture.",
     "Lolo National Forest": "La forêt nationale de Lolo est une destination idéale pour les habitants et les visiteurs qui souhaitent jouer. Il y a tellement de choses à explorer avec des opportunités telles que la randonnée, l'équitation en VHR, le camping, la location de chalets et de tours d'observation, les sports d'hiver et deux centres d'accueil.",
     "San Bernardino National Forest": "À seulement quelques kilomètres de l'Inland Empire, du Haut Désert et de la vallée de Coachella, nous sommes situés à la fois à San Bernardino et dans le comté de Riverside. Faites de la randonnée, du vélo, du camping, de la raquette, conduisez votre VHR ou découvrez les ruisseaux, les ruisseaux et les cascades."
     }
@@ -129,7 +130,116 @@ def nat_forests():
     
     with col2:
         forest_plotting(selected_forest)
+    
+    # load model data file
+    model_data_df = pd.read_csv(f'data/modeling_data/{selected_forest}_preprocessed.csv')
+    #st.dataframe(model_data_df)
+    
+    col3, col4 = st.columns(2)
+    with col3:
+        # figure representing fire days per year
+        fire_year = model_data_df.groupby(by='year', as_index=False).agg({'target':'sum'})
+        fig1 = px.bar(fire_year,
+                      x='year',
+                      y='target',
+                      labels={'target': 'Nombre de jours avec feu'})
+        fig1.update_traces(marker_color='#FF8C00')
+        fig1.update_layout(title={'text':'<b>Distribution des jours de feux de forêt par année</b>',
+                                  'font': {'size': 18},
+                                     'x':0.5,
+                                     'xanchor': 'center'},
+                           legend={'font':{'size':11},
+                                      'x':0.01,
+                                      'xanchor':'left',
+                                      'y':0.99,
+                                      'yanchor':'top'},
+                           height=300,
+                           #width=600
+                          )
+        st.plotly_chart(fig1)
 
+        # figure representing average TMAX by year
+        tmax_year = model_data_df.groupby(by='year', as_index=False).agg({'TMAX_mean':'mean'})
+        fig2 = px.bar(tmax_year,
+                      x='year',
+                      y='TMAX_mean',
+                      color='TMAX_mean',
+                      range_color=[0,40],
+                      color_continuous_scale="YlOrRd",
+                     )
+        #fig2.update_traces(marker_color='#EC5800')
+        fig2.update_layout(title={'text':'<b>Moyenne des températures max par année</b>',
+                                     'font': {'size': 18},
+                                     'x':0.5,
+                                     'xanchor': 'center'},
+                           legend={'font':{'size':11},
+                                      'x':0.01,
+                                      'xanchor':'left',
+                                      'y':0.99,
+                                      'yanchor':'top'},
+                           height=300,
+                           #width=600
+                          )
+        st.plotly_chart(fig2)
+    
+    with col4:
+        # figure representing lightening days by year
+        light_year = model_data_df.groupby(by='year', as_index=False).agg({'lightnings':'sum'})
+        fig4 = px.bar(light_year,
+                      x='year',
+                      y='lightnings',
+                      color='lightnings',
+                      range_color=[0,300],
+                      color_continuous_scale="dense",
+                     )
+        #fig4.update_traces(marker_color='#CCCCFF')
+        fig4.update_layout(title={'text':'<b>Nb de jours avec de la foudre par année</b>',
+                                  'font': {'size': 18},
+                                  'x':0.5,
+                                  'xanchor': 'center'},
+                           legend={'font':{'size':11},
+                                   'x':0.01,
+                                   'xanchor':'left',
+                                   'y':0.99,
+                                   'yanchor':'top'},
+                           height=300,
+                           #width=600
+                          )
+        st.plotly_chart(fig4)
+
+
+        # figure representing sum PRCP by year
+        prcp_year = model_data_df.groupby(by='year', as_index=False).agg({'PRCP_mean':'sum'})
+        fig3 = px.bar(prcp_year,
+                      x='year',
+                      y='PRCP_mean',
+                      color='PRCP_mean',
+                      range_color=[0,2000],
+                      color_continuous_scale="Blues",
+                     )
+        #fig3.update_traces(marker_color='#273BE2')
+        fig3.update_layout(title={'text':'<b>Cumul des précipitations par année</b>',
+                                  'font': {'size': 18},
+                                  'x':0.5,
+                                  'xanchor': 'center'},
+                           legend={'font':{'size':11},
+                                   'x':0.01,
+                                   'xanchor':'left',
+                                   'y':0.99,
+                                   'yanchor':'top'},
+                           height=300,
+                           #width=600
+                          )
+        st.plotly_chart(fig3)
+
+    
+        
+        
+        
+        
+        
+        
+        
         
 if __name__ == "__main__":
     run()

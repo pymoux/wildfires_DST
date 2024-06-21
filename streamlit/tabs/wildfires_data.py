@@ -56,7 +56,7 @@ def run():
         """
         <h2><i class="fas fa-info-circle icon"></i> Contexte des données</h2>
         <p>
-        Pour notre étude, nous avons à disposition un jeu de données principal mis à disposition pour notre projet, celui-ci est disponible sur le site <a href="https://www.kaggle.com">Kaggle</a>:
+        Pour notre étude, nous avons à disposition un jeu de données principal mis à disposition pour notre projet, celui-ci est disponible sur le site <a href="https://www.kaggle.com">Kaggle</a> :
         <strong>1.88 Million US Wildfires, 24 years of geo-referenced wildfire records</strong>.
         Ce jeu de données contient une base de données spatiales des incendies de forêt recensés aux États-Unis à partir de rapport d'organismes de lutte contre les incendies fédérales, étatiques et locales sur une période s'étalant de 1992 à 2015. Ces données ont été collectées grâce au financement du gouvernement américain et sont libres de tout droit pour utilisation.
         </p>
@@ -134,7 +134,7 @@ def run():
         fig.update_traces(marker_color=custom_color)
 
         # Mettre en forme le titre en gras et le centrer
-        fig.update_layout(title={'text':'<b>Distribution des feux de forêt au fil des ans</b>',
+        fig.update_layout(title={'text':'<b>Distribution des feux de forêt au fil des années</b>',
                                  'font': {'size': 18},
                                  'x':0.5,
                                  'xanchor': 'center'},
@@ -251,9 +251,9 @@ def run():
         st.header("Dimension spatiale")
         st.markdown(
         """
-        La répartition des feux sur le territoire est un facteur clé dans leur analyse, directement lié à d’autres variables comme le climat, chaud et sec dans le sud par exemple, et la densité de population, plus de surface à brûler dans les régions peu peuplées ou plus de déclenchement liées aux activités humaines dans les régions densément peuplées.
+        La répartition des feux sur le territoire est un facteur clé dans leur analyse, directement liée à d’autres variables comme le climat, chaud et sec dans le sud par exemple, et la densité de population, plus de surface à brûler dans les régions peu peuplées ou plus de déclenchement liées aux activités humaines dans les régions densément peuplées.
 
-        Le jeu de données contient finalement 3 niveaux géographiques : les grandes régions GACC, les États et les comtés. Au niveau le plus élevé, la figure suivante présente la distribution du nombre de feux par grande région.
+        Le jeu de données contient finalement 3 niveaux géographiques : les grandes régions GACC (Geographic Area Coordination Centers), les États et les Comtés. Au niveau le plus élevé, la figure suivante présente la distribution du nombre de feux par grande région.
         """
         )
 
@@ -388,7 +388,7 @@ def run():
         st.header("Dimension cause des incendies")
         st.markdown(
             """
-            Les causes des incendies de forêt sont variées et peuvent être d'origine naturelle ou humaine. Le jeu de données contient des informations détaillées sur les causes des incendies, ce qui permet d'analyser les tendances et les corrélations.
+            Les causes des incendies de forêt sont variées et peuvent être d'origine naturelle ou humaine. Le jeu de données contient des informations détaillées sur les causes des incendies permettant d'analyser les tendances et les corrélations.
             """
         )
 
@@ -416,7 +416,7 @@ def run():
         # Analyse du graphique par cause
         st.markdown(
             """
-            La cause principale des feux de forêt est d’origine humaine puisque liée à des activités de brûlages de débris résidentiels ou industriels. Pour mettre en évidence ce phénomène, les causes des incendies ont été catégorisées en 2 classes : les feux d’origine naturelle et humaine.
+            La cause principale des feux de forêt est d’origine humaine puisque liée à des activités de brûlages de débris résidentiels ou industriels. Pour mettre en évidence ce phénomène, les causes des incendies ont été catégorisées en 2 classes : les feux d’origine naturelle et d'origine humaine.
             
             """
         )
