@@ -127,6 +127,12 @@ def nat_forests():
         # Affichage de la description de la forêt sélectionnée
         st.markdown(f"**{selected_forest}**")
         st.markdown(f"{forests[selected_forest]}")
+        st.write("Superficie : XXX")
+        st.write("Nb de stations météo : XX")
+        st.markdown("""
+        Nb de jours de feu sur la période : XXX\n
+        soit XXX par an en moyenne
+        """)
     
     with col2:
         forest_plotting(selected_forest)
@@ -167,7 +173,6 @@ def nat_forests():
                       range_color=[0,40],
                       color_continuous_scale="YlOrRd",
                      )
-        #fig2.update_traces(marker_color='#EC5800')
         fig2.update_layout(title={'text':'<b>Moyenne des températures max par année</b>',
                                      'font': {'size': 18},
                                      'x':0.5,
@@ -177,6 +182,8 @@ def nat_forests():
                                       'xanchor':'left',
                                       'y':0.99,
                                       'yanchor':'top'},
+                           xaxis_title='',
+                           yaxis_title='Temp. max moyenne (°C)',
                            height=300,
                            #width=600
                           )
@@ -192,7 +199,6 @@ def nat_forests():
                       range_color=[0,300],
                       color_continuous_scale="dense",
                      )
-        #fig4.update_traces(marker_color='#CCCCFF')
         fig4.update_layout(title={'text':'<b>Nb de jours avec de la foudre par année</b>',
                                   'font': {'size': 18},
                                   'x':0.5,
@@ -217,7 +223,6 @@ def nat_forests():
                       range_color=[0,2000],
                       color_continuous_scale="Blues",
                      )
-        #fig3.update_traces(marker_color='#273BE2')
         fig3.update_layout(title={'text':'<b>Cumul des précipitations par année</b>',
                                   'font': {'size': 18},
                                   'x':0.5,
@@ -227,6 +232,8 @@ def nat_forests():
                                    'xanchor':'left',
                                    'y':0.99,
                                    'yanchor':'top'},
+                           xaxis_title='',
+                           yaxis_title='Précip. cumulées (mm)',
                            height=300,
                            #width=600
                           )

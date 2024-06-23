@@ -1,15 +1,12 @@
 # weather_data.py
 import streamlit as st
 import pandas as pd
-#import matplotlib.pyplot as plt
 import plotly.express as px
 from datetime import datetime
 from pathlib import Path
 import os
 import gdown
 
- 
-# POSSIBILITE DE FAIRE 2 SOUS-PARTIES POUR SEPARER temp/prcp ET lightnings
  
 title = "Les données météo aux Etats-Unis entre 1992 et 2015"
 sidebar_name = "Données météorologiques"
@@ -26,10 +23,6 @@ url="https://drive.google.com/file/d/1Zh3diZn8ycX46zW-xLHrkp4cBZajxO1E/view?usp=
 if not os.path.exists(destination):
     #gdown.download(f"https://drive.google.com/drive/u/0/folders/{file_id}", destination, quiet=False)
     gdown.download(url, destination, quiet=False)
-
-
-# Charger les données
-#df_w = pd.read_csv(destination, compression='gzip', sep=",", index_col=0)
 
 
 def run():
@@ -72,81 +65,116 @@ def run():
             Ces différentes manipulations ont nécessité des ressources importantes afin d'obtenir le jeu de données final.
             """
             )
-        
-        select_year = st.slider(label="Select a year",
-                                  min_value=1992,
-                                  max_value=2015,
-                                  value=2015)
-        #st.write("", selected_date)
-
-        
+                
         df_w = pd.read_csv(destination, compression='gzip', sep=",", index_col=0)
         df_w['date'] = pd.to_datetime(df_w['date'], format='%Y%m%d')
         df_w['year'] = df_w['date'].dt.year
         df_w['month'] = df_w['date'].dt.month
         df_w['season'] = df_w['month'] % 12 // 3 + 1
 
-        df_yearstate = df_w.groupby(by=['year', 'state'], as_index=False).mean()
+        df_yearstate = df_w.groupby(by=['year', 'state'], as_index=False).agg({'TMAX_mean':'mean', 'PRCP_mean':'sum'})
         df_yearstate[df_yearstate['state']=='DC']
         
         states = sorted(df_yearstate['state'].unique())
-        # drop DC state if null values
-        if len(df_yearstate.loc[(df_yearstate['year']==select_year)&(df_yearstate['state']=='DC'),'TMAX_mean']) == 0:
-            states.remove('DC')
+        states_abb = {"Alaska":"AK", "Alabama":"AL", "Arkansas":"AR", "Arizona":"AZ", "California":"CA",
+                      "Colorado":"CO", "Connecticut":"CT", "District of Columbia":"DC", "Delaware":"DE",
+                      "Florida":"FL", "Georgia":"GA", "Hawaii":"HI", "Iowa":"IA", "Idaho":"ID", "Illinois":"IL",
+                      "Indiana":"IN", "Kansas":"KS", "Kentucky":"KY", "Louisiana":"LA", "Massachusetts":"MA",
+                      "Maryland":"MD", "Maine":"ME", "Michigan":"MI", "Minnesota":"MN", "Missouri":"MO",
+                      "Mississippi":"MS", "Montana":"MT", "North Carolina":"NC", "North Dakota":"ND",
+                      "Nebraska":"NE", "New Hampshire":"NH", "New Jersey":"NJ", "New Mexico":"NM", "Nevada":"NV",
+                      "New York":"NY", "Ohio":"OH", "Oklahoma":"OK", "Oregon":"OR", "Pennsylvania":"PA",
+                      "Puerto Rico":"PR", "Rhode Island":"RI", "South Carolina":"SC", "South Dakota":"SD",
+                      "Tennessee":"TN", "Texas":"TX", "Utah":"UT", "Virginia":"VA", "Vermont":"VT", "Washington":"WA",
+                      "Wisconsin":"WI", "West Virginia":"WV", "Wyoming":"WY"}
+
 
         # choropleths figures
-        fig_t1 = px.choropleth(locations=states,
+        fig_t1 = px.choropleth(df_yearstate,
+                               locations='state',
                                locationmode="USA-states",
-                               color=df_yearstate.loc[df_yearstate['year']==select_year,'TMAX_mean'],
-                               scope="usa",color_continuous_scale="YlOrRd",
-                               labels={'TMAX_mean':'Temp. max'},
-                               height=400)
-        
-        fig_p1 = px.choropleth(locations=states,
-                               locationmode="USA-states",
-                               color=df_yearstate.loc[df_yearstate['year']==select_year,'PRCP_mean'],
+                               color="TMAX_mean",
                                scope="usa",
-                               color_continuous_scale="Blues",
-                               labels={'TMAX_mean':'Temp. max'},
-                               height=400)
+                               color_continuous_scale="YlOrRd",
+                               range_color=[df_yearstate['TMAX_mean'].min(),df_yearstate['TMAX_mean'].max()],
+                               animation_frame='year',
+                              )
+        fig_t1.update_layout(title={'text':f'<b>Température moyenne par état entre 1992 et 2015</b>',
+                                    'font': {'size': 18},
+                                    'x':0.5,
+                                    'xanchor': 'center'},
+                             coloraxis_showscale=False,
+                             height=600,
+                            )
+        
+        fig_p1 = px.scatter_geo(df_yearstate,
+                                locations='state',
+                                scope="usa",
+                                locationmode="USA-states",
+                                size='PRCP_mean',
+                                size_max=20,
+                                animation_frame="year",
+                               )
 
-        col1, col2 = st.columns(2)
-        with col1:
-            st.plotly_chart(fig_t1, use_container_width=True)
-        with col2:
-            st.plotly_chart(fig_p1, use_container_width=True)
+        fig_t1.add_trace(fig_p1.data[0])
+        for i, frame in enumerate(fig_t1.frames):
+            fig_t1.frames[i].data += (fig_p1.frames[i].data[0],)
+        st.plotly_chart(fig_t1)
         
         # bar charts
-        select_state = st.selectbox("", states)
+        selection_state = st.selectbox('', options=list(states_abb.keys()), index=9)
+        selected_state = states_abb[selection_state]
         
-        fig_t2 = px.bar(df_yearstate.loc[df_yearstate['state']==select_state],
+        fig_t2 = px.bar(df_yearstate.loc[df_yearstate['state']==selected_state],
                         x='year',
                         y='TMAX_mean',
                         color='TMAX_mean',
                         range_color=[df_yearstate['TMAX_mean'].min(),df_yearstate['TMAX_mean'].max()],
                         color_continuous_scale="YlOrRd",
-                        height=400
                        )
-        fig_p2 = px.bar(df_yearstate.loc[df_yearstate['state']==select_state],
+        fig_t2.update_layout(title={'text': f'<b>Température max moyenne par année ({selected_state})</b>',
+                                    'font':{'size':18},
+                                    'x':0.5,
+                                    'xanchor': 'center'},
+                             coloraxis=dict(colorbar_x=0.96, 
+                                            colorbar_y=0.5, 
+                                            colorbar_len=0.5, 
+                                            colorbar_thickness=10,
+                                            colorbar_title=None),
+                             xaxis_title='',
+                             yaxis_title='Temp. max moyenne (°C)',
+                             #height=400,
+                             #width=600
+                            )
+        
+        fig_p2 = px.bar(df_yearstate.loc[df_yearstate['state']==selected_state],
                         x='year',
                         y='PRCP_mean',
                         color='PRCP_mean',
                         range_color=[df_yearstate['PRCP_mean'].min(),df_yearstate['PRCP_mean'].max()],
                         color_continuous_scale="Blues",
-                        height=400
                        )
+        fig_p2.update_layout(title={'text': f'<b>Précipitations cumulées par année ({selected_state})</b>',
+                                    'font':{'size':18},
+                                    'x':0.5,
+                                    'xanchor': 'center'},
+                             coloraxis=dict(colorbar_x=0.96, 
+                                            colorbar_y=0.5, 
+                                            colorbar_len=0.5, 
+                                            colorbar_thickness=10,
+                                            colorbar_title=None),
+                             xaxis_title='',
+                             yaxis_title='Précip. cumulées (mm)',
+                             #height=400,
+                             #width=600
+                            )
+        
         col3, col4 = st.columns(2)
         with col3:
             st.plotly_chart(fig_t2, use_container_width=True)
         with col4:
             st.plotly_chart(fig_p2, use_container_width=True)
-        
-        
-        
-        
-        
-        
-    
+
     with dimension_tabs[1]:
         st.header("Impacts de foudre")
 
