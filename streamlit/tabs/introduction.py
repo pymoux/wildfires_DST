@@ -1,7 +1,7 @@
 # introduction.py
 import streamlit as st
 
-title = "Feux de Forêt"
+title = "Projet Feux de Forêt"
 sidebar_name = "Introduction"
 
 def run():

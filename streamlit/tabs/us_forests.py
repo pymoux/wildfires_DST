@@ -75,6 +75,13 @@ def nat_forests():
     
     # Load datasets
     @st.cache_data
+    def load_stations(inpath):
+        df = pd.read_csv(inpath, sep=',', index_col=0)
+        return df
+    
+    df_stations = load_stations('data/forests_with_stations.csv')
+    
+    @st.cache_data
     def load_data(path1, path2, path3):
         df = pd.read_csv(path1,
                          sep='\t',
@@ -129,21 +136,31 @@ def nat_forests():
         selected_forest = st.selectbox("Sélectionnez une forêt nationale", gdf_forest['FORESTNAME'], index=26)
         
         # Affichage de la description de la forêt sélectionnée
-        st.markdown(f"**{selected_forest}**")
-        st.markdown(f"{forests[selected_forest]}")
-        st.write("Superficie : XXX")
-        st.write("Nb de stations météo : XX")
-        st.markdown("""
-        Nb de jours de feu sur la période : XXX\n
-        soit XXX par an en moyenne
-        """)
+        #st.markdown(f"**{selected_forest}**")
+        #st.markdown(f"{forests[selected_forest]}")
+        proc_id = df_stations.loc[df_stations['FORESTNAME']==selected_forest, 'PROCLAIMED'].values[0]
+        st.markdown(f"**Identifiant :** {proc_id}")
+        area = df_stations.loc[df_stations['FORESTNAME']==selected_forest, 'GIS_ACRES'].values[0].round()
+        st.markdown(f"**Superficie :** {area:,.1f} acres")
+        #st.write(f"Superficie : {type(area)} acres")
+        nb_stat = df_stations.loc[df_stations['FORESTNAME']==selected_forest, 'nb_stations'].values[0]
+        nb_stat_ext = df_stations.loc[df_stations['FORESTNAME']==selected_forest, 'nb_stations_ext'].values[0]
+        st.markdown(f"**Nb de stations météo :** {nb_stat_ext}, dont {nb_stat} strictement dans la forêt")
+        
+        try:
+            # load model dataset
+            model_data_df = pd.read_csv(f'data/modeling_data/{selected_forest}_preprocessed.csv')
+        
+            nb_fires = model_data_df['target'].sum()
+            st.markdown(f"**Nb de départs de feu sur la période :** {nb_fires} soit {nb_fires/24:.1f} par an en moyenne")
+        except FileNotFoundError:
+            st.markdown(f"**Nb de jours de feu sur la période :** no data available")
+            pass
+    
+    
     
     with col2:
         forest_plotting(selected_forest)
-    
-    # load model data file
-    model_data_df = pd.read_csv(f'data/modeling_data/{selected_forest}_preprocessed.csv')
-    #st.dataframe(model_data_df)
     
     col3, col4 = st.columns(2)
     with col3:

@@ -20,7 +20,7 @@ def get_base64_image(image_path):
 
 def run():
     
-    st.set_page_config(page_title="DataScientest, DA-NOV",
+    st.set_page_config(page_title="DataScientest DA-NOV, Projet Feux de Forêt",
                        layout="wide", # PREFERONS-NOUS UNE DISPOSITION LARGE OU PLUS ETROITE ET CENTREE ???
                        initial_sidebar_state="expanded",
                        )
