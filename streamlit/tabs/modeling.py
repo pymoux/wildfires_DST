@@ -89,37 +89,34 @@ def subpage1():
         unsafe_allow_html=True
         )
 
+    #Start change 1 
+    # Sélectionner la forêt et l'option SMOTE
+    forest_list = [f.rsplit("_preprocessed.csv", 1)[0] for f in os.listdir(preprocessed_data_dir) if f.endswith("preprocessed.csv")]
+    selected_forest = st.selectbox("Sélectionnez la forêt", forest_list)
+    use_smote = st.checkbox("Utiliser SMOTE", value=False)
+
+    # Charger les données prétraitées pour la forêt sélectionnée
+    forest_df = load_data(selected_forest)
+    
+    # Charger le modèle
+    model = load_model(selected_forest, use_smote)
+
+    # Couleur personnalisée pour les graphiques
+    custom_color = '#FF8C00'  # Un ton de beige pour le feu
+    # Stop change 1
+
+    '''# Original start 1
     # Sélectionner la forêt
     forest_list = [f.rsplit("_preprocessed.csv", 1)[0] for f in os.listdir(preprocessed_data_dir) if f.endswith("preprocessed.csv")]
     selected_forest = st.selectbox("", forest_list)
 
     # Charger les données prétraitées pour la forêt sélectionnée
     forest_df = load_data(selected_forest)
-    
-    
+        
     # Couleur personnalisée pour les graphiques
     custom_color = '#FF8C00'  # Un ton de beige pour le feu
-    
-    
-    
-    '''# Calculer le taux de valeurs manquantes par variable
-    missing_rate = forest_df.isna().sum() / len(forest_df)
-    
-    # Créer un graphique à barres
-    fig, ax = plt.subplots(figsize=(12, 6))
-    missing_rate.plot(kind='bar', ax=ax)
-    ax.set_title('Taux de valeurs manquantes par variable')
-    ax.set_xlabel('Variables')
-    ax.set_ylabel('Taux de valeurs manquantes')
-    
-    # Rotation des étiquettes de l'axe x pour une meilleure lisibilité
-    plt.xticks(rotation=45, ha='right')
-    
-    # Afficher le graphique dans Streamlit
-    st.subheader('Taux de valeurs manquantes par variable')
-    st.pyplot(fig)
-    '''
     model = load_model(selected_forest, use_smote=False)
+    '''# Original stop 1
     
     
     # Répartition des classes
@@ -161,7 +158,7 @@ def subpage1():
     
     with col1:
         # Créer une figure et un axe
-        fig, ax = plt.subplots(figsize=(16, 8))
+        fig, ax = plt.subplots(figsize=(16, 8), facecolor="#ebe3d2")
         
         # Tracer l'histogramme et la courbe de densité
         sns.histplot(data=forest_df, x=feature, kde=True, color=custom_color, ax=ax)
@@ -178,6 +175,9 @@ def subpage1():
         # Centrer le titre
         ax.set_title(ax.get_title(), loc="center")
         
+        # Couleur de fond de l'axe
+        ax.set_facecolor("#ebe3d2")  # Couleur de fond de l'axe
+        
         # Afficher le graphique dans Streamlit
         st.pyplot(fig)
     
@@ -192,7 +192,207 @@ def subpage1():
         - L'axe vertical montre le nombre d'occurrences de chaque valeur ou la densité de la distribution.
         - Les pics ou les tendances dans la distribution peuvent indiquer des conditions météorologiques ou environnementales favorisant les incendies.
         """)
-                
+
+    # Conteneur stylisé comme un menu déroulant
+    st.markdown(
+        """
+        <div style="
+            border: 0px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #333;
+            background-color: #737a5d;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            
+        </div>
+        """,
+        unsafe_allow_html=True
+    )                
+
+    col1, col2 = st.columns([1, 1])
+    
+    
+
+    # Charger les données de test et les prédictions
+    X_test = forest_df.drop('target', axis=1)
+    y_test = forest_df['target']
+    y_pred = model.predict(X_test)
+
+    with col1:
+        # Afficher le rapport de classification
+        st.subheader("Rapport de Classification")
+        report = classification_report(y_test, y_pred, output_dict=True)
+        report_df = pd.DataFrame(report).transpose()
+        #st.dataframe(report_df)
+        with st.expander("Voir le tableau complet", expanded=True):
+            st.table(report_df.style.set_table_attributes('style="font-size: 14px; text-align: center; width: 100%;"'))
+    
+        # Appréciation des résultats
+        st.markdown("<u>Appréciation des Résultats</u>", unsafe_allow_html=True)
+        if (report['0']['f1-score'] > 0.60 and
+            report['1']['f1-score'] > 0.60 and
+            abs(report['0']['support'] - report['1']['support']) / ((report['0']['support'] + report['1']['support']) / 2) >= 0.3 and
+            abs(report['macro avg']['f1-score'] - report['accuracy']) <= 0.2):
+            
+            st.info(f"Les résultats indiquent que l'algorithme est performant pour la forêt '{selected_forest}'.")
+            st.write("*Critères de sélection : F1-score > 0.60 pour les classes 0 et 1, différence relative de 30% ou plus entre les supports des classes 0 et 1 et écart entre macro avg (f1-score) et accuracy <= 0.2*")    
+
+        else:
+            st.warning(f"Les résultats montrent que des améliorations peuvent être nécessaires pour optimiser les performances du modèle sur la forêt '{selected_forest}'. De possibles actions à entreprendre incluent :")
+            st.write("- Collecter davantage de données pour les classes minoritaires.")
+            st.write("- Optimiser les hyperparamètres du modèle.")
+            st.write("- Explorer d'autres algorithmes plus adaptés aux caractéristiques des données.")
+            st.write("*Critères de sélection : F1-score > 0.60 pour les classes 0 et 1, différence relative de 30% ou plus entre les supports des classes 0 et 1 et écart entre macro avg (f1-score) et accuracy <= 0.2*")    
+    
+    with col2: 
+        st.markdown("""
+        **Description :** 
+        
+        Le rapport de classification fournit des métriques détaillées pour évaluer la performance du modèle de classification, notamment la précision, le rappel, et le score F1 pour chaque classe.
+
+        **Interprétation :**
+        - **Précision** : Proportion des prédictions positives correctes parmi toutes les prédictions positives. Une précision élevée indique peu de faux positifs.
+        - **Rappel (Recall)** : Proportion des vrais positifs parmi tous les échantillons réellement positifs. Un rappel élevé indique peu de faux négatifs.
+        - **Score F1** : Moyenne harmonique de la précision et du rappel, donnant une mesure équilibrée de la performance du modèle.
+        - **Support** : Nombre d'occurrences de chaque classe dans l'ensemble de test.
+        
+        **Pour chaque classe :**
+        - **0 (Pas d'incendie)** : Montre les métriques pour la classe "Pas d'incendie".
+        - **1 (Incendie)** : Montre les métriques pour la classe "Incendie".
+        
+        **Moyennes :**
+        - **Accuracy** : Proportion de prédictions correctes parmi toutes les prédictions.
+        - **Macro avg** : Moyenne arithmétique des métriques pour chaque classe.
+        - **Weighted avg** : Moyenne pondérée des métriques, tenant compte du support de chaque classe.
+        """)
+    
+    # Conteneur stylisé comme un menu déroulant
+    st.markdown(
+        """
+        <div style="
+            border: 0px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #333;
+            background-color: #737a5d;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            
+        </div>
+        """,
+        unsafe_allow_html=True
+    )                
+    
+    # Matrice de Confusion
+    st.subheader("Matrice de Confusion")
+    
+    col1, col2 = st.columns([1,1])
+    
+    with col1:
+        y_true = forest_df['target']
+        y_pred = model.predict(forest_df.drop(columns=['target']))
+        cm = confusion_matrix(y_true, y_pred)
+        
+        fig = px.imshow(cm, labels=dict(x="Prédit", y="Vrai"), x=['Pas d\'incendie', 'Incendie'], y=['Pas d\'incendie', 'Incendie'], 
+                        title='Matrice de Confusion')
+        fig.update_layout(title={'text': '<b>Matrice de Confusion</b>', 'x': 0.5, 'xanchor': 'center'})
+        
+        # Centrer le graphique dans la colonne
+        fig.update_layout(width=800)  # Ajustez la largeur selon vos besoins
+        st.plotly_chart(fig)
+        
+    
+    with col2:
+        st.markdown("""
+        **Description :** 
+        
+        La matrice de confusion présente un tableau qui compare les prédictions du modèle avec les valeurs réelles (vrai positif, faux positif, vrai négatif, faux négatif).
+    
+        **Interprétation :**
+        - Les éléments diagonaux de la matrice représentent les prédictions correctes.
+        - Les autres cellules indiquent les erreurs de classification (faux positifs et faux négatifs).
+        - Une matrice bien équilibrée montre une bonne performance du modèle avec un nombre élevé de vrais positifs et vrais négatifs.
+        """)
+    
+    
+    # Conteneur stylisé comme un menu déroulant
+    st.markdown(
+        """
+        <div style="
+            border: 0px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #333;
+            background-color: #737a5d;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            
+        </div>
+        """,
+        unsafe_allow_html=True
+    )              
+    
+    # Importances des caractéristiques
+    st.subheader("Importances des caractéristiques")
+    
+    col1, col2 = st.columns([1,1])
+    
+    with col1:
+        feature_importances = pd.DataFrame(model.feature_importances_, index=forest_df.columns[:-1], columns=['Importance'])
+        feature_importances = feature_importances.sort_values(by='Importance', ascending=False).reset_index()
+        feature_importances.columns = ['Caractéristique', 'Importance']
+        
+        fig = px.bar(feature_importances, x='Caractéristique', y='Importance', title='Importances des caractéristiques',
+                     labels={'Caractéristique': 'Caractéristique', 'Importance': 'Importance'}, color_discrete_sequence=[custom_color])
+        fig.update_layout(title={'text': '<b>Importances des caractéristiques</b>', 'x':0.5, 'xanchor': 'center'},
+                          xaxis_tickangle=-45)
+        fig.update_layout(width=800)  # Ajustez la largeur selon vos besoins
+        st.plotly_chart(fig)   
+    
+    with col2:
+        st.markdown("""
+        **Description :** 
+        
+        Ce graphique montre l'importance relative des différentes caractéristiques utilisées par le modèle pour prendre ses décisions de prédiction.
+
+        **Interprétation :**
+        - Les caractéristiques avec une plus grande importance ont un impact plus significatif sur les prédictions du modèle.
+        - Ce graphique aide à identifier quelles variables sont les plus pertinentes pour prédire le risque d'incendie de forêt, ce qui peut orienter les efforts de gestion et de prévention.
+        """)
+ 
+    # Conteneur stylisé comme un menu déroulant
+    st.markdown(
+        """
+        <div style="
+            border: 0px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #333;
+            background-color: #737a5d;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     
     # Courbe ROC pour le modèle sélectionné
     st.subheader("Courbe ROC")
@@ -226,63 +426,26 @@ def subpage1():
         """)
         
     
-    # Histogramme des Prédictions
-    st.subheader("Histogramme des Prédictions")
-    
-    col1, col2 = st.columns([1, 1])
-    
-    with col1: 
-        predictions = model.predict(forest_df.drop(columns=['target']))
-    
-        fig = px.histogram(predictions, x=predictions, title='Distribution des prédictions', labels={'x': 'Prédiction'}, color_discrete_sequence=['#FF8C00'])
-        fig.update_layout(title={'text': '<b>Histogramme des Prédictions</b>', 'x': 0.5, 'xanchor': 'center'})
-        
-        # Centrer le graphique dans la colonne
-        fig.update_layout(width=600)  # Ajustez la largeur selon vos besoins
-        st.plotly_chart(fig)
-    
-    with col2:
-        st.markdown("""
-        **Description :** 
-        
-        Cet histogramme représente la distribution des prédictions du modèle pour la probabilité ou la classe prédite des jours dans la forêt.    
-
-        **Interprétation :**
-        - L'axe horizontal représente les valeurs prédites (probabilité ou classe).
-        - L'axe vertical montre le nombre de jours prédits à chaque valeur.
-        - Un histogramme bien calibré montre une répartition équilibrée des prédictions entre les deux classes (incendie vs. pas d'incendie).
-        """)
-
-
-    # Matrice de Confusion
-    st.subheader("Matrice de Confusion")
-    
-    col1, col2 = st.columns([1,1])
-    
-    with col1:
-        y_true = forest_df['target']
-        y_pred = model.predict(forest_df.drop(columns=['target']))
-        cm = confusion_matrix(y_true, y_pred)
-        
-        fig = px.imshow(cm, labels=dict(x="Prédit", y="Vrai"), x=['Pas d\'incendie', 'Incendie'], y=['Pas d\'incendie', 'Incendie'], 
-                        title='Matrice de Confusion')
-        fig.update_layout(title={'text': '<b>Matrice de Confusion</b>', 'x': 0.5, 'xanchor': 'center'})
-        
-        # Centrer le graphique dans la colonne
-        fig.update_layout(width=600)  # Ajustez la largeur selon vos besoins
-        st.plotly_chart(fig)
-    
-    with col2:
-        st.markdown("""
-        **Description :** 
-        
-        La matrice de confusion présente un tableau qui compare les prédictions du modèle avec les valeurs réelles (vrai positif, faux positif, vrai négatif, faux négatif).
-
-        **Interprétation :**
-        - Les éléments diagonaux de la matrice représentent les prédictions correctes.
-        - Les autres cellules indiquent les erreurs de classification (faux positifs et faux négatifs).
-        - Une matrice bien équilibrée montre une bonne performance du modèle avec un nombre élevé de vrais positifs et vrais négatifs.
-        """)
+    # Conteneur stylisé comme un menu déroulant
+    st.markdown(
+        """
+        <div style="
+            border: 0px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #333;
+            background-color: #737a5d;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
     # Courbe Precision-Recall
@@ -297,7 +460,7 @@ def subpage1():
         fig.update_layout(title={'text': '<b>Courbe Precision-Recall</b>', 'x': 0.5, 'xanchor': 'center'})
         
         # Centrer le graphique dans la colonne
-        fig.update_layout(width=600)  # Ajustez la largeur selon vos besoins
+        fig.update_layout(width=800)  # Ajustez la largeur selon vos besoins
         st.plotly_chart(fig)
 
     with col2:
@@ -311,36 +474,73 @@ def subpage1():
         - La précision mesure la proportion d'exemples positifs correctement prédits parmi toutes les prédictions positives.
         - Une courbe qui monte rapidement vers des valeurs élevées de précision et de rappel indique une meilleure performance du modèle.
         """)
+
+
+    # Conteneur stylisé comme un menu déroulant
+    st.markdown(
+        """
+        <div style="
+            border: 0px solid #d3d3d3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #333;
+            background-color: #737a5d;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        ">
+            
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+            
+              
+    # Histogramme des Prédictions
+    st.subheader("Histogramme des Prédictions")
+    
+    col1, col2 = st.columns([1, 1])
+    
+    with col1: 
+        '''
+        predictions = model.predict(forest_df.drop(columns=['target']))
+    
+        fig = px.histogram(predictions, x=predictions, title='Distribution des prédictions', labels={'x': 'Prédiction'}, color_discrete_sequence=['#FF8C00'])
+        fig.update_layout(title={'text': '<b>Histogramme des Prédictions</b>', 'x': 0.5, 'xanchor': 'center'})
         
-    
-    # Importances des caractéristiques
-    st.subheader("Importances des caractéristiques")
-    
-    col1, col2 = st.columns([1,1])
-    
-    with col1:
-        feature_importances = pd.DataFrame(model.feature_importances_, index=forest_df.columns[:-1], columns=['Importance'])
-        feature_importances = feature_importances.sort_values(by='Importance', ascending=False).reset_index()
-        feature_importances.columns = ['Caractéristique', 'Importance']
-        
-        fig = px.bar(feature_importances, x='Caractéristique', y='Importance', title='Importances des caractéristiques',
-                     labels={'Caractéristique': 'Caractéristique', 'Importance': 'Importance'}, color_discrete_sequence=[custom_color])
-        fig.update_layout(title={'text': '<b>Importances des caractéristiques</b>', 'x':0.5, 'xanchor': 'center'},
-                          xaxis_tickangle=-45)
+        # Centrer le graphique dans la colonne
         fig.update_layout(width=600)  # Ajustez la largeur selon vos besoins
-        st.plotly_chart(fig)   
+        st.plotly_chart(fig)
+        '''
+        # Prédictions du modèle
+        predictions = model.predict(forest_df.drop(columns=['target']))
+        
+        # Compter les occurrences des prédictions
+        prediction_counts = pd.Series(predictions).value_counts().sort_index()
+        prediction_counts_df = pd.DataFrame({'Prédiction': prediction_counts.index, 'Nombre': prediction_counts.values})
+        
+        # Créer un diagramme à barres
+        fig = px.bar(prediction_counts_df, x='Prédiction', y='Nombre', title='Distribution des prédictions', labels={'Prédiction': 'Prédiction', 'Nombre': 'Nombre'}, color_discrete_sequence=['#FF8C00'])
+        fig.update_layout(title={'text': '<b>Diagramme à barres des Prédictions</b>', 'x': 0.5, 'xanchor': 'center'})
+        
+        # Centrer le graphique dans la colonne
+        fig.update_layout(width=800)  # Ajustez la largeur selon vos besoins
+        st.plotly_chart(fig)
     
     with col2:
         st.markdown("""
         **Description :** 
         
-        Ce graphique montre l'importance relative des différentes caractéristiques utilisées par le modèle pour prendre ses décisions de prédiction.
+        Cet histogramme représente la distribution des prédictions du modèle pour la probabilité ou la classe prédite des jours dans la forêt.    
 
         **Interprétation :**
-        - Les caractéristiques avec une plus grande importance ont un impact plus significatif sur les prédictions du modèle.
-        - Ce graphique aide à identifier quelles variables sont les plus pertinentes pour prédire le risque d'incendie de forêt, ce qui peut orienter les efforts de gestion et de prévention.
+        - L'axe horizontal représente les valeurs prédites (probabilité ou classe).
+        - L'axe vertical montre le nombre de jours prédits à chaque valeur.
+        - Un histogramme bien calibré montre une répartition équilibrée des prédictions entre les deux classes (incendie vs. pas d'incendie).
         """)
-                
+
 
                                    
 
@@ -492,6 +692,7 @@ def subpage2():
     y_test = forest_df['target']
     y_pred = model.predict(X_test)
 
+
     # Effectuer la prédiction
     if st.button("Prédire"):
         prediction = model.predict(input_data)
@@ -513,3 +714,5 @@ def subpage2():
                 </style>
                 """, unsafe_allow_html=True)
 
+    
+    
