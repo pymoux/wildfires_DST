@@ -192,8 +192,8 @@ def run():
         st.subheader("Exploration")
         st.markdown(
             """
-            Les données brutes ont tout d'abord été filtrées sur les plus de 72000 stations météorologiques américaines et portoricaines.
-            Les données quotidiennes de températures (TMIN, TAVG, TMAX) et de précipitations (PRCP) ont été extraites.
-            Ces différentes manipulations ont nécessité des ressources importantes afin d'obtenir le jeu de données final.
+            Les données brutes sont composée de 3 éléments : date, localisation d'un point central (latitude et longitude) et nombre d'impacts.\n
+            Dans un premier temps, ces données ont simplement été colocalisées avec les états américains pour leur exploration.
+            Tout comme pour les données météo, la manipulation de ce jeu de données de plus de 70 millions d'enregistrements demande des ressources importantes.
             """
             )

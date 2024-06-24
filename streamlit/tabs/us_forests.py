@@ -36,13 +36,17 @@ def usfs():
     with col1:
         st.markdown(
             """
-            Le US Forest Service (USFS), une agence du département de l’agriculture américain, administre les 154 forêts nationales protégées des Etats-Unis. Ces forêts s’étendent sur près de 190 millions d’acres et sont réparties sur 43 états et Porto Rico. Elles sont désignées comme terres publiques à des fins de préservation, de récréation, de gestion durable des ressources naturelles et de protection de la biodiversité. Elles représentent à ce titre un héritage naturel précieux pour les générations présentes et futures et doivent être préservées, notamment des incendies. Selon l’analyse exploratoire du jeu de données initiales, l’USFS constitue le second organisme le plus impacté par les incendies de forêts en termes de superficie brûlées sur la période d’étude avec une tendance à la hausse au cours du temps. Nous avons donc pris le parti comme objectif de modéliser et de transmettre le risque d'incendie dans ces forêts nationales à l’US Forest Service afin de permettre une coordination adéquate des ressources pour lutter contre les incendies de forêts protégées.
+            Le US Forest Service (USFS), une agence du département de l’agriculture américain, administre les 154 forêts nationales protégées des Etats-Unis.\n
+            Ces forêts s’étendent sur près de 190 millions d’acres et sont réparties sur 43 états et Porto Rico. Elles sont désignées comme terres publiques à des fins de préservation, de récréation, de gestion durable des ressources naturelles et de protection de la biodiversité. Elles représentent à ce titre un héritage naturel précieux pour les générations présentes et futures et doivent être préservées, notamment des incendies.\n
+            Selon l’analyse exploratoire du jeu de données initiales, l’USFS constitue le second organisme le plus impacté par les incendies de forêts en termes de superficie brûlées sur la période d’étude avec une tendance à la hausse au cours du temps. Nous avons donc pris le parti comme objectif de modéliser et de transmettre le risque d'incendie dans ces forêts nationales à l’US Forest Service afin de permettre une coordination adéquate des ressources pour lutter contre les incendies dans les forêts nationales protégées.
             """
         )
+        st.markdown("[Site officiel du US Forest Service](https://www.fs.usda.gov)")
 
     with col2:
         # Charger et afficher l'image avec une largeur personnalisée
-        image_path = "assets/US_Forest.png"
+        #image_path = "assets/US_Forest.png"
+        image_path = "assets/Image1.png"
         st.image(image_path, caption="Forêts Nationales des États-Unis", width=500)
 
 
