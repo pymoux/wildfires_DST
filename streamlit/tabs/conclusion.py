@@ -8,6 +8,7 @@ sidebar_name = "Conclusion"
 def run():
     # Afficher le titre principal
     st.title(title)
+    st.markdown("---")
 
     # Contenu de la conclusion avec des icônes
     conclusion_text = """
